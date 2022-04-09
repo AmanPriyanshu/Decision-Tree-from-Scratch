@@ -66,35 +66,51 @@ class DecisionTree:
 			if node is None:
 				self.root = Node("True", "True")
 				node = self.root
+				self.default = target[0]
 			node.add_children(attribute_names[split_index], val_cat)
 			if self.verbose:
-				print(tab+attribute_names[split_index]+"=="+val_cat)
+				print(tab+"`->"+attribute_names[split_index]+"=="+val_cat)
 			if sub_data.shape[1]==0:
 				node.children[-1].p_vals={i:str(round(100*j/sub_target.shape[0], 1))+"%" for i,j in zip(np.unique(sub_target, return_counts=True)[0], np.unique(sub_target, return_counts=True)[1])}
 				if self.verbose:
-					print(tab+" ", {i:str(round(100*j/sub_target.shape[0], 1))+"%" for i,j in zip(np.unique(sub_target, return_counts=True)[0], np.unique(sub_target, return_counts=True)[1])})
+					print(tab+"   `->"+str({i:str(round(100*j/sub_target.shape[0], 1))+"%" for i,j in zip(np.unique(sub_target, return_counts=True)[0], np.unique(sub_target, return_counts=True)[1])}))
 			else:
 				sub_attribute_names = attribute_names[:]
 				sub_attribute_names.pop(split_index)
-				self.make_split(sub_data, sub_target, sub_attribute_names, tab=tab+"  ", node=node.children[-1])
+				self.make_split(sub_data, sub_target, sub_attribute_names, tab=tab+"   ", node=node.children[-1])
 
 	def score(self, samples, target):
 		acc = 0
 		for sample, label in zip(samples, target):
 			response = dt.root.predict(sample)
 			classes, preds = [], []
-			for key, item in response.items():
-				classes.append(key)
-				preds.append(float(item.replace('%', '')))
-			pred = classes[preds.index(max(preds))]
+			if response is not None:
+				for key, item in response.items():
+					classes.append(key)
+					preds.append(float(item.replace('%', '')))
+				pred = classes[preds.index(max(preds))]
+			else:
+				pred = self.default
 			if pred==label:
 				acc+=1
 		return acc/len(samples)
 
 if __name__ == '__main__':
+	split = 0.9
 	dt = DecisionTree(verbose=True)
 	data, target, attribute_names = read()
-	dt.fit(data, target, attribute_names)
-	samples = [{name:val for name,val in zip(attribute_names, row)} for row in data]
-	accuracy = dt.score(samples, target)
-	print("\n\nPerformance:", str(round(accuracy, 2))+"%")
+	indices = np.arange(data.shape[0])
+	np.random.shuffle(indices)
+	data = data[indices]
+	target = target[indices]
+	train_data = data[:int(split*data.shape[0])]
+	train_target = target[:int(split*data.shape[0])]
+	test_data = data[int(split*data.shape[0]):]
+	test_target = target[int(split*data.shape[0]):]
+	dt.fit(train_data, train_target, attribute_names)
+	samples = [{name:val for name,val in zip(attribute_names, row)} for row in train_data]
+	accuracy = dt.score(samples, train_target)
+	print("\n\nTrain Performance:", str(round(accuracy, 2))+"%")
+	samples = [{name:val for name,val in zip(attribute_names, row)} for row in test_data]
+	accuracy = dt.score(samples, test_target)
+	print("\n\nTest Performance:", str(round(accuracy, 2))+"%")
