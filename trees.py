@@ -110,7 +110,7 @@ if __name__ == '__main__':
 	dt.fit(train_data, train_target, attribute_names)
 	samples = [{name:val for name,val in zip(attribute_names, row)} for row in train_data]
 	accuracy = dt.score(samples, train_target)
-	print("\n\nTrain Performance:", str(round(accuracy, 2))+"%")
+	print(f"\n\nTrain Performance: {str(round(accuracy, 2))}")
 	samples = [{name:val for name,val in zip(attribute_names, row)} for row in test_data]
 	accuracy = dt.score(samples, test_target)
-	print("\n\nTest Performance:", str(round(accuracy, 2))+"%")
+	print(f"\n\nTest Performance: {str(round(accuracy, 2))}")
