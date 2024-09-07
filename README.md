@@ -5,8 +5,8 @@ Decision Tree through ID3 algorithm
 
 #### Titanic Dataset:
 ```console
-Train Performance: 0.87%
-Test Performance: 0.85%
+Train Performance: 87%
+Test Performance: 85%
 ```
 
 ## Tree-Representation:
@@ -32,6 +32,6 @@ Test Performance: 0.85%
          `->{'YES': '100.0%'}
 
 
-Train Performance: 0.83%
-Test Performance: 1.0%
+Train Performance: 83%
+Test Performance: 100%
 ```
