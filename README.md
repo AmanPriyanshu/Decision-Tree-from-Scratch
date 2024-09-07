@@ -3,7 +3,7 @@ Decision Tree through ID3 algorithm
 
 ## Performance:
 
-#### Titanic Dataset:
+### Titanic Dataset:
 
 ```console
 Train Performance: 87%
@@ -31,8 +31,9 @@ Test Performance: 85%
          `->{'NO': '66.7%', 'YES': '33.3%'}
       `->Breathing issues==YES
          `->{'YES': '100.0%'}
-
-
+```
+### Cardiac Dataset:
+```
 Train Performance: 83%
 Test Performance: 100%
 ```
